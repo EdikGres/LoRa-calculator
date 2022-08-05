@@ -6,65 +6,70 @@ using namespace std;
 
 int main() {
     LoRa::Parameters p = {};
-    int payload = 255;
-    int preamble = 7;
-    int preamble_max = 13;
-    int sf = 6;
-    int sf_max = 10;
-    int crc = 0;
-    int crc_max = 2;
-    int cr = 1;
-    int cr_max = 5;
-    int ih = 0;
-    int ih_max = 1;
-    int de = 0;
-    int de_max = 1;
     double_t bws[] = {7.8, 10.4, 15.6, 20.8, 31.2, 41.7, 62.5, 125, 250, 500};
-    int bw_i = 7;
-    int bw_i_max = 10;
 
-    const int rows = 1 * 6 * 4 * 2 * 4 * 1 * 1 * 3;
-    const int columns = 16;
 
-    double matrix[rows][columns];
-
-    int counter = 0;
-
-    LoRaCalculator calc;
-
-    for (int i = preamble; i < preamble_max; i++) {
-        for (int j = sf; j < sf_max; j++) {
-            for (int k = bw_i; k < bw_i_max; ++k) {
-                for (int l = crc; l < crc_max; ++l) {
-                    for (int m = cr; m < cr_max; ++m) {
-
-                        p.implicitHeader = 1;
-                        if (j == 6)
-                            p.implicitHeader = 1;
-                        p.Npayload = 255;
-                        p.Npreamble = i;
-                        p.spreadFactor = j;
-                        p.bandwidth = bws[k];
-                        p.CRC = l;
-                        p.codingRate = m;
-                        p.dataLowRateOptimization = 0;
-                        calc.setParameters(p);
-                        calc.calculate();
-                        matrix[counter++][0] = p.Npreamble;
-                    }
-                }
-            }
-        }
+    //SF
+    uint16_t SF_min = 0;
+    uint16_t SF_max = 0;
+    cout << "Enter SF_min(6-12):";
+    cin >> SF_min;
+    if (SF_min < 6 || SF_max > 12) {
+        cerr << "Error!" << endl;
+        return -1;
     }
-
-
-    for (int i = 0; i < 2304; ++i) {
-        cout << matrix[i][0] << endl;
+    cout << "Enter SF_max(6-12)";
+    cin >> SF_max;
+    if (SF_max < 6 || SF_max > 12 || SF_max < SF_min) {
+        cerr << "Error!" << endl;
+        return -1;
     }
+    uint8_t SF_count = SF_max - SF_min + 1;
+//    cout << "SF_count: " << (short)SF_count << endl;
+
+    //BW
+    uint16_t bandwidth_min;
+    uint16_t bandwidth_max;
+    cout << "\nEnter bandwith" << endl;
+    for (int i = 0; i < sizeof(bws) / sizeof(double_t); ++i) {
+        cout << "*" << i << " is " << bws[i] << " kHz;" << endl;
+    }
+    cout << "Bandwidth_min: ";
+    cin >> bandwidth_min;
+    if (bandwidth_min < 0 || bandwidth_min > sizeof(bws) / sizeof(double_t)) {
+        cerr << "Error!" << endl;
+    }
+    cout << "Bandwidth_max: ";
+    cin >> bandwidth_max;
+    if (bandwidth_max < 0 || bandwidth_max > sizeof(bws) / sizeof(double_t) || bandwidth_max < bandwidth_min) {
+        cerr << "Error!" << endl;
+    }
+    uint8_t bandwidth_count = bandwidth_max - bandwidth_min + 1;
+//    cout << "Bandwidth_count: " << (short) bandwidth_count << endl;
+
+    //Payload
+    uint16_t payload_min = 0;
+    uint16_t payload_max = 0;
+    cout << "\nEnter payload_min(1-255):";
+    cin >> payload_min;
+    if (payload_min < 1 || payload_min > 255) {
+        cerr << "Error!" << endl;
+        return -1;
+    }
+    cout << "Enter payload_max(1-255)";
+    cin >> payload_max;
+    if (payload_max < 1 || payload_max > 255 || payload_min > payload_max) {
+        cerr << "Error!" << endl;
+        return -1;
+    }
+    uint8_t payload_count = payload_max - payload_min + 1;
+    //cout << "Payload_count: " << (short)payload_count << endl;
 
 
-    cout << counter << endl;
-    cout << rows << endl;
+
+
+
+
     return 0;
 }
 
