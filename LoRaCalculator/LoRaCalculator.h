@@ -86,6 +86,7 @@ namespace LoRa {
         double_t payloadTime; /**< How much air-time does the payload take. ms*/
         double_t timeOnAir; /**< How much air-time does the whole packet take. ms*/
         double_t speedLoRa; /**< LoRa speed. bits/second*/
+        double_t SNR;
     };
 }
 /*! \brief LoRa calculator.

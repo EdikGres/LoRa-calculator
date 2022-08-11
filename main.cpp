@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cmath>
+#include <iomanip>
+#include <fstream>
 #include "LoRaCalculator/LoRaCalculator.h"
 
 /**
@@ -134,9 +136,16 @@ int main() {
 
     const unsigned int rows =
             SF_count * bandwidth_count * payload_count * preamble_count * cr_count * crc_count * ih_count * DE_count;
-    cout << rows << endl;
-    const unsigned int columns = 16; // magic)
-//    double_t** matrix = ;
+    cout << "rows:" << rows << endl;
+    const unsigned int columns = 17; // magic)
+
+    //need heap, otherwise stack overfow))
+    double_t matrix[rows][columns];
+    for (int j = 0; j < rows; ++j) {
+        for (int k = 0; k < 17; ++k) {
+            matrix[j][k] = 0;
+        }
+    }
 
     LoRaCalculator LRcalc;
     LoRa::Parameters p = {};
@@ -165,8 +174,25 @@ int main() {
                                     LRcalc.calculate();
                                     //cout << LRcalc << endl;
                                     res = LRcalc.getResults();
+                                    matrix[counter][0] = p.spreadFactor;
+                                    matrix[counter][1] = p.bandwidth;
+                                    matrix[counter][2] = p.Npayload;
+                                    matrix[counter][3] = p.Npreamble;
+                                    matrix[counter][4] = p.codingRate;
+                                    matrix[counter][5] = p.CRC;
+                                    matrix[counter][6] = p.implicitHeader;
+                                    matrix[counter][7] = p.dataLowRateOptimization;
 
-                                    //matrix[counter++][0] =
+                                    matrix[counter][8] = res.symbolTime;
+                                    matrix[counter][9] = res.symbolRate;
+                                    matrix[counter][10] = res.preambleSymbols;
+                                    matrix[counter][11] = res.preambleTime;
+                                    matrix[counter][12] = (double_t) res.payloadSymbols;
+                                    matrix[counter][13] = res.payloadTime;
+                                    matrix[counter][14] = res.timeOnAir;
+                                    matrix[counter][15] = res.speedLoRa;
+                                    matrix[counter][16] = res.SNR;
+                                    counter++;
                                 }
                             }
                         }
@@ -174,9 +200,40 @@ int main() {
                 }
             }
         }
-
-        cout << counter << endl;
     }
+
+    cout << left << setw(20) << "| SF " << setw(20) << "| BW " << setw(20) << "| Payload " << setw(20) << "| Preamble "
+         << setw(20) << "| CR " << setw(20) << "| CRC " << setw(20) << "| IH " << setw(20) << "| DE " << setw(20)
+         << "| SymbolTime " << setw(20) << "| SymbolRate " << setw(20) << "| PreambleSymbols " << setw(20)
+         << "| PreambleTime " << setw(20) << "| PayloadSymbols " << setw(20) << "| PayloadTime " << setw(20)
+         << "| TimeOnAir ms" << setw(20) << "| SpeedLoRa bits/s" << setw(20) << "| SNR  dB |" << endl;
+    for (int j = 0; j < counter; ++j) {
+        for (int k = 0; k < 17; ++k) {
+            cout << left <<  setw(20) << matrix[j][k];
+        }
+        cout << endl;
+    }
+
+    std::ofstream out;
+    out.open("out.txt");
+    if(out.is_open()){
+        out << left << setw(20) << "| SF " << setw(20) << "| BW " << setw(20) << "| Payload " << setw(20) << "| Preamble "
+             << setw(20) << "| CR " << setw(20) << "| CRC " << setw(20) << "| IH " << setw(20) << "| DE " << setw(20)
+             << "| SymbolTime " << setw(20) << "| SymbolRate " << setw(20) << "| PreambleSymbols " << setw(20)
+             << "| PreambleTime " << setw(20) << "| PayloadSymbols " << setw(20) << "| PayloadTime " << setw(20)
+             << "| TimeOnAir " << setw(20) << "| SpeedLoRa |" << endl;
+        for (int j = 0; j < counter; ++j) {
+            for (int k = 0; k < 17; ++k) {
+                out << left <<  setw(20) << matrix[j][k];
+
+            }
+            out << endl;
+        }
+        out.close();
+    }
+
+
+    cout << "counter:" << counter << endl;
 
     return 0;
 }

@@ -181,6 +181,33 @@ void LoRaCalculator::calculate() {
     results.payloadTime = (double_t) results.payloadSymbols * results.symbolTime;
     results.timeOnAir = results.preambleTime + results.payloadTime;
     results.speedLoRa = parameters.Npayload / results.timeOnAir * 1000 * 8;// *1000 for seconds, *8 for bits
+
+    switch (parameters.spreadFactor) {
+        case LORA_SPREAD_FACTOR_6:
+            results.SNR = -5;
+            break;
+        case LORA_SPREAD_FACTOR_7:
+            results.SNR = -7.5;
+            break;
+        case LORA_SPREAD_FACTOR_8:
+            results.SNR = -10;
+            break;
+        case LORA_SPREAD_FACTOR_9:
+            results.SNR = -12.5;
+            break;
+        case LORA_SPREAD_FACTOR_10:
+            results.SNR = -15;
+            break;
+        case LORA_SPREAD_FACTOR_11:
+            results.SNR = -17.5;
+            break;
+        case LORA_SPREAD_FACTOR_12:
+            results.SNR = -20;
+            break;
+        default:
+            results.SNR = 0;
+            break;
+    }
 }
 
 std::ostream &operator<<(std::ostream &os, const LoRaCalculator &calculator) {
