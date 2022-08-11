@@ -221,7 +221,7 @@ int main() {
              << setw(20) << "| CR " << setw(20) << "| CRC " << setw(20) << "| IH " << setw(20) << "| DE " << setw(20)
              << "| SymbolTime " << setw(20) << "| SymbolRate " << setw(20) << "| PreambleSymbols " << setw(20)
              << "| PreambleTime " << setw(20) << "| PayloadSymbols " << setw(20) << "| PayloadTime " << setw(20)
-             << "| TimeOnAir " << setw(20) << "| SpeedLoRa |" << endl;
+             << "| TimeOnAir " << setw(20) << "| SpeedLoRa " << "| SNR  dB |" << endl;
         for (int j = 0; j < counter; ++j) {
             for (int k = 0; k < 17; ++k) {
                 out << left <<  setw(20) << matrix[j][k];
